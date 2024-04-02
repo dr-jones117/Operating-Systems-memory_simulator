@@ -20,7 +20,7 @@ class EventHandler:
             event: Event = heapq.heappop(self.event_queue)
 
             if self.current_time != event.time:
-                self.logger.log(f"\n\nNew Time! {event.time}")
+                self.logger.log(f"\nt = {event.time}")
                 self.current_time = event.time
 
             if event.type == EventType.PROCESS_ARRIVAL:
@@ -32,7 +32,7 @@ class EventHandler:
                 self.add_event(insert_event)
 
             elif event.type == EventType.PROCESS_DEPARTURE:
-                self.logger.log("Process Departing!")
+                self.logger.log("\nProcess Departing!")
 
             elif event.type == EventType.ATTEMPT_PROCESS_MEMORY_INSERT:
                 self.logger.log(f"\nAttempt insert process into memory!  {event.process}")
