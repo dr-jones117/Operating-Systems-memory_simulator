@@ -13,11 +13,17 @@ class MemoryManager:
     def process_queue_str(self):
         return [process.id for process in self.process_queue]
     
-    def get_memory_map_str(self) -> str:
-        pass
-
     def add_process(self, process: Process):
         self.process_queue.append(process)
+    
+    def get_memory_map_str(self) -> str:
+        map_str = "Memory Map: "
+
+        for start, end, status in self.memory_map:
+            map_str += f"{start}-{end - 1}: {status}\n\t\t"   
+
+        map_str = map_str[0:-1]
+        return map_str
 
     def allocate_process(self, process: Process) -> bool:
         pass
@@ -30,18 +36,6 @@ class VspMemoryManager(MemoryManager):
         super().__init__(logger, mem_size)
         self.fit_strategy = fit_strategy
 
-    def get_memory_map_str(self) -> str:
-        map_str = "Memory Map: "
-
-        for start, end, status in self.memory_map:
-            if status != 'Hole':
-                map_str += f"{start}-{end - 1}: Process {status}\n\t\t"
-            else:
-                map_str += f"{start}-{end - 1}: {status}\n\t\t"
-
-        map_str = map_str[0:-1]
-        return map_str
-
     def allocate_process(self) -> Process:
         if len(self.process_queue) <= 0:
             return None
@@ -49,28 +43,27 @@ class VspMemoryManager(MemoryManager):
         self.memory_map.sort(key=lambda x: x[0])
         
         for process in self.process_queue:
-            for i, (start, end, status) in enumerate(self.memory_map):
-                if status == 'Hole' and (end - start) >= process.total_memory_amount():
-                    allocated = True
-                    # Allocate process to this partition
-                    self.memory_map.insert(i, (start, start + process.total_memory_amount(), process.id))
-                    if start + process.total_memory_amount() < end:
-                        self.memory_map[i + 1] = (start + process.total_memory_amount(), end, 'Hole')
-                    else:
-                        del self.memory_map[i + 1]
-                    self.process_queue.remove(process)
+            idx, start_addr, end_addr  = self.fit_strategy.get_position(self.memory_map, process.total_memory_amount())
+            if idx != -1:
+                self.memory_map.insert(idx, (start_addr, start_addr + process.total_memory_amount(), f"Process {process.id}"))
+                if start_addr + process.total_memory_amount() < end_addr:
+                    self.memory_map[idx + 1] = (start_addr + process.total_memory_amount(), end_addr, 'Hole')
+                else:
+                    del self.memory_map[idx + 1]
+                self.process_queue.remove(process)
                     
-                    return process
+                return process
+                    
         return None
 
     
     def deallocate_process(self, process: Process):
         for i, (start, end, status) in enumerate(self.memory_map):
-            if status == process.id:
+            if status == f"Process {process.id}":
                 self.memory_map[i] = (start, end, 'Hole')
 
                 if i > 0 and self.memory_map[i - 1][2] == 'Hole':
-                    prev_start, prev_end, _ = self.memory_map[i - 1]
+                    prev_start, _, _ = self.memory_map[i - 1]
                     self.memory_map[i] = (prev_start, end, 'Hole')
                     del self.memory_map[i - 1]
                     i -= 1

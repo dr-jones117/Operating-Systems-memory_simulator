@@ -1,4 +1,5 @@
 import heapq
+from typing import List
 from event_system.event import Event
 from logger import Logger
 from event_system.event_type import EventType
@@ -9,9 +10,10 @@ from process_system.process import Process
 class EventHandler:
     def __init__(self, logger: Logger, memory_manager: MemoryManager):
         self.logger = logger;
-        self.current_time = None
-        self.event_queue = []
         self.memory_manager = memory_manager
+
+        self.event_queue: List[Event] = []
+        self.current_time = None
         self.first_time = True
         self.turnaround_calc = 0
         self.num_processes = 0
