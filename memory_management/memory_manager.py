@@ -25,7 +25,7 @@ class MemoryManager:
         map_str = map_str[0:-1]
         return map_str
 
-    def allocate_process(self, process: Process) -> bool:
+    def allocate_process(self) -> bool:
         pass
         
     def deallocate_process(self, process: Process):
@@ -82,6 +82,6 @@ class SegMemoryManager(MemoryManager):
 
 
 class PagMemoryManager(MemoryManager):
-    def __init__(self, logger: Logger, mem_size: int, page_size: int = None):
+    def __init__(self, logger: Logger, mem_size: int, page_size: int):
         super().__init__(logger, mem_size)
         self.page_size = page_size

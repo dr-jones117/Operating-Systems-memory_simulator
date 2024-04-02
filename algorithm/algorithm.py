@@ -27,7 +27,18 @@ class BestStrategy(FitStrategy):
         super().__init__(logger)
 
     def get_position(self, map: List, size: int) -> int:
-        self.logger.log('Best fitting')
+        possible_holes = []
+
+        for i, (start, end, status) in enumerate(map):
+            if status == 'Hole' and (end - start) >= size:
+                possible_holes.append((i, (int(start), int(end), status)))
+
+        if len(possible_holes) <= 0:
+            return -1, -1, -1
+        
+        sorted_possible_holes = sorted(possible_holes, key=lambda x: x[1][1] - x[1][0])
+        idx, (start, end, status) = sorted_possible_holes[0]
+        return idx, start, end
 
 
 class WorstStrategy(FitStrategy):
@@ -35,5 +46,16 @@ class WorstStrategy(FitStrategy):
         super().__init__(logger)
 
     def get_position(self, map: List, size: int) -> int:
-        self.logger.log("worst fitting!")
+        possible_holes = []
+
+        for i, (start, end, status) in enumerate(map):
+            if status == 'Hole' and (end - start) >= size:
+                possible_holes.append((i, (int(start), int(end), status)))
+
+        if len(possible_holes) <= 0:
+            return -1, -1, -1
+        
+        sorted_possible_holes = sorted(possible_holes, key=lambda x: x[1][1] - x[1][0])
+        idx, (start, end, status) = sorted_possible_holes[len(sorted_possible_holes) - 1]
+        return idx, start, end
 

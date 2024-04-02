@@ -4,21 +4,22 @@ from event_system.event import Event
 from logger import Logger
 from event_system.event_type import EventType
 from memory_management.memory_manager import MemoryManager
-from process_system.process import Process
 
 
 class EventHandler:
     def __init__(self, logger: Logger, memory_manager: MemoryManager):
         self.logger = logger;
         self.memory_manager = memory_manager
-
-        self.event_queue: List[Event] = []
+        self.entry_counter = 0
+        self.event_queue = []
         self.current_time = None
         self.first_time = True
         self.turnaround_calc = 0
         self.num_processes = 0
 
     def add_event(self, event: Event):
+        event.entry_order = self.entry_counter
+        self.entry_counter += 1
         heapq.heappush(self.event_queue, event)
 
     def allocate_process_to_memory_manager(self):
@@ -51,20 +52,21 @@ class EventHandler:
                 self.logger.log(f"Process {event.process.id} Arrives\n\t")
                 
                 self.memory_manager.add_process(event.process)
-                insert_event = Event(EventType.ALLOCATE_PROCESS, self.current_time, event.process)
+                insert_event = Event(EventType.ALLOCATE_PROCESS, self.current_time)
                 self.add_event(insert_event)
 
                 self.logger.log(f"Input Queue:{str(self.memory_manager.process_queue_str())}\n\t")
 
             elif event.type == EventType.PROCESS_DEPARTURE:
                 self.logger.log(f"Process {event.process.id} completes\n\t")
-                self.turnaround_calc += (self.current_time - event.process.arrival_time)
                 
                 self.memory_manager.deallocate_process(event.process)
-                self.allocate_process_to_memory_manager()
-
                 self.logger.log(self.memory_manager.get_memory_map_str())
-                    
+
+                insert_event = Event(EventType.ALLOCATE_PROCESS, self.current_time)
+                self.add_event(insert_event)   
+
+                self.turnaround_calc += (self.current_time - event.process.arrival_time)     
 
             elif event.type == EventType.ALLOCATE_PROCESS:
                 self.allocate_process_to_memory_manager()

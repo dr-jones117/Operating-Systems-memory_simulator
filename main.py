@@ -17,6 +17,7 @@ def main():
     policy: int = int(input('Memory management policy (1 - VSP, 2 - PAG, 3 - SEG): '))
     page_size: int = 0
     algorithm: int = 0
+    fit_strategy = None
     
     # If we are paging, we don't need to run a fitting algorithm, instead, we need the page size
     if policy == MemoryPolicy.PAG.value:
@@ -35,20 +36,20 @@ def main():
 
     # Create the fitting strategy if needed
     if algorithm == AlgorithmType.FIRST.value:
-        algorithm = FirstStrategy(logger)
+        fit_strategy = FirstStrategy(logger)
     elif algorithm == AlgorithmType.BEST.value:
-        algorithm == BestStrategy(logger)
+        fit_strategy = BestStrategy(logger)
     elif algorithm == AlgorithmType.WORST.value:
-        algorithm == WorstStrategy(logger)
+        fit_strategy = WorstStrategy(logger)
 
     # Create the correct memory manager type
     memory_manager = None
     if policy == MemoryPolicy.VSP.value:
-        memory_manager = VspMemoryManager(logger, algorithm, mem_size)
+        memory_manager = VspMemoryManager(logger, fit_strategy, mem_size)
     elif policy == MemoryPolicy.SEG.value:
-        memory_manager = SegMemoryManager(logger, algorithm, mem_size)
+        memory_manager = SegMemoryManager(logger, fit_strategy, mem_size)
     elif policy == MemoryPolicy.PAG.value:
-        memory_manager = PagMemoryManager(logger, algorithm, mem_size, page_size)
+        memory_manager = PagMemoryManager(logger, mem_size, page_size)
     else:
         print(f"Error: Invalid policy ({policy})")
         exit(1)
