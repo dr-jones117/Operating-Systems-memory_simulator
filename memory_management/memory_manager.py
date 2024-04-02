@@ -8,6 +8,7 @@ class MemoryManager:
         self.mem_size = mem_size
         self.memory_map = [(0, self.mem_size, 'Hole')]
         self.process_queue = []
+        self.turnaround_time = 0
 
     def process_queue_str(self):
         return [process.id for process in self.process_queue]
@@ -37,6 +38,8 @@ class VspMemoryManager(MemoryManager):
                 map_str += f"{start}-{end - 1}: Process {status}\n\t\t"
             else:
                 map_str += f"{start}-{end - 1}: {status}\n\t\t"
+
+        map_str = map_str[0:-1]
         return map_str
 
     def allocate_process(self) -> Process:
