@@ -1,9 +1,8 @@
 from event_system.event_type import *
-from memory_management.memory_manager import MemoryManager
 from process_system.process import Process
 
 class Event:
-    def __init__(self, type: EventType, time: int, process: Process, memory_manager: MemoryManager):
+    def __init__(self, type: EventType, time: int, process: Process):
         self.type = type
         self.time = time
         self.process = process
