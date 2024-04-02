@@ -1,5 +1,6 @@
 from typing import List
 from event_system.event import Event
+from logger import Logger
 from event_system.event_type import *
 from process_system.process import Process
 from process_system.process_file import ProcessFile
@@ -23,9 +24,11 @@ def main():
 
     process_file: ProcessFile = ProcessFile(path)
     processes: List[Process] = process_file.get_processes()
+    logger = Logger(out_path)
 
-    memory_manager: MemoryManager = MemoryManager(mem_size, page_size)
-    event_handler = EventHandler(out_path)
+    memory_manager: MemoryManager = MemoryManager(logger, mem_size, page_size)
+    event_handler = EventHandler(logger, memory_manager)
+    
     for process in processes:
         event = Event(EventType.PROCESS_ARRIVAL, process.arrival_time, process, memory_manager)
         event_handler.add_event(event)
