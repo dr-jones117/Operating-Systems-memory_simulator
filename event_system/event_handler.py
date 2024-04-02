@@ -26,13 +26,15 @@ class EventHandler:
         process = self.memory_manager.allocate_process()
         if process != None:
             self.logger.log(f"MM moves Process {process.id} to memory\n\t")
+            self.logger.log(f"Input Queue:{self.memory_manager.get_process_queue_str()}\n\t")
+            
             self.logger.log(self.memory_manager.get_memory_map_str())
 
             leave_event = Event(EventType.PROCESS_DEPARTURE, self.current_time + process.memory_lifetime, process)
             self.add_event(leave_event)
 
     def turnaround_time(self):
-        return self.turnaround_calc / self.num_processes
+        return round(self.turnaround_calc / self.num_processes, 2)
 
     def run_events(self):
         while self.event_queue:
@@ -49,13 +51,13 @@ class EventHandler:
 
             if event.type == EventType.PROCESS_ARRIVAL:
                 self.num_processes += 1
-                self.logger.log(f"Process {event.process.id} Arrives\n\t")
+                self.logger.log(f"Process {event.process.id} arrives\n\t")
                 
                 self.memory_manager.add_process(event.process)
                 insert_event = Event(EventType.ALLOCATE_PROCESS, self.current_time)
                 self.add_event(insert_event)
 
-                self.logger.log(f"Input Queue:{str(self.memory_manager.process_queue_str())}\n\t")
+                self.logger.log(f"Input Queue:{self.memory_manager.get_process_queue_str()}\n\t")
 
             elif event.type == EventType.PROCESS_DEPARTURE:
                 self.logger.log(f"Process {event.process.id} completes\n\t")

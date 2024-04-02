@@ -10,14 +10,15 @@ class MemoryManager:
         self.process_queue = []
         self.turnaround_time = 0
 
-    def process_queue_str(self):
-        return [process.id for process in self.process_queue]
+    def get_process_queue_str(self):
+        id_list = [process.id for process in self.process_queue]
+        return "[" + " ".join(map(str, id_list)) + "]"
     
     def add_process(self, process: Process):
         self.process_queue.append(process)
     
     def get_memory_map_str(self) -> str:
-        map_str = "Memory Map: "
+        map_str = "Memory Map: \n\t\t"
 
         for start, end, status in self.memory_map:
             map_str += f"{start}-{end - 1}: {status}\n\t\t"   
@@ -63,8 +64,8 @@ class VspMemoryManager(MemoryManager):
                 self.memory_map[i] = (start, end, 'Hole')
 
                 if i > 0 and self.memory_map[i - 1][2] == 'Hole':
-                    prev_start, _, _ = self.memory_map[i - 1]
-                    self.memory_map[i] = (prev_start, end, 'Hole')
+                    start, _, _ = self.memory_map[i - 1]
+                    self.memory_map[i] = (start, end, 'Hole')
                     del self.memory_map[i - 1]
                     i -= 1
                 
