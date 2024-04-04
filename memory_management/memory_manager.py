@@ -1,3 +1,4 @@
+from typing import List
 from algorithm.algorithm import FitStrategy
 from logger import Logger
 from process_system.process import Process
@@ -7,7 +8,7 @@ class MemoryManager:
         self.logger = logger;
         self.mem_size = mem_size
         self.memory_map = [(0, self.mem_size, 'Hole')]
-        self.process_queue = []
+        self.process_queue: List[Process] = []
         self.turnaround_time = 0
 
     def get_process_queue_str(self):
@@ -26,7 +27,7 @@ class MemoryManager:
         map_str = map_str[0:-1]
         return map_str
 
-    def allocate_process(self) -> bool:
+    def allocate_process(self) -> Process:
         pass
         
     def deallocate_process(self, process: Process):
@@ -76,10 +77,7 @@ class VspMemoryManager(MemoryManager):
                 return
 
 
-class SegMemoryManager(MemoryManager):
-    def __init__(self, logger: Logger, fit_strategy: FitStrategy, mem_size: int):
-        super().__init__(logger, mem_size)
-        self.fit_strategy = fit_strategy
+
 
 
 class PagMemoryManager(MemoryManager):
