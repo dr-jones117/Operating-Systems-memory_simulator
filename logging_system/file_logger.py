@@ -1,6 +1,8 @@
 from typing import TextIO
+from logging_system.logger import Logger
 
-class EventLogger:
+
+class FileLogger(Logger):
     def __init__(self, path: str):
         try:
             self.out_file: TextIO = open(path, 'w')
@@ -9,5 +11,5 @@ class EventLogger:
             print("Error: File not found:", path)
             exit(1)
     
-    def log_event(self, log: str):
+    def log(self, log: str):
         self.out_file.write(log)
