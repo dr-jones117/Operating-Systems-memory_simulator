@@ -3,6 +3,7 @@ from algorithm.fit_strategy import BestStrategy, FirstStrategy, WorstStrategy
 from event_system.event import Event
 from logging_system.console_logger import ConsoleLogger
 from event_system.event_type import *
+from logging_system.file_logger import FileLogger
 from memory_management.pag_memory_manager import PagMemoryManager
 from memory_management.seg_memory_manager import SegMemoryManager
 from memory_management.vsp_memory_manager import VspMemoryManager
@@ -29,15 +30,15 @@ def main():
 
     path: str = input('Process Information File Name: ')
     # If we're using a file logger, you'll need to get the output file name
-    #out_path: str = input('Output File Name: ')
+    out_path: str = input('Output File Name: ')
 
     # Get the processes from the path provided by the user
     process_file: ProcessFile = ProcessFile(path)
     processes: List[Process] = process_file.get_processes()
 
     # You can switch the logger you want to use here
-    #logger = FileLogger(out_path)
-    logger = ConsoleLogger()
+    logger = FileLogger(out_path)
+    #logger = ConsoleLogger()
 
     # Create the fitting strategy if needed
     if algorithm == AlgorithmType.FIRST.value:
