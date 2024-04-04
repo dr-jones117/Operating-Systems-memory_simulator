@@ -1,19 +1,12 @@
 from typing import List
-from logger import Logger
 
 
 class FitStrategy:
-    def __init__(self, logger: Logger):
-        self.logger = logger
-
     def get_position(self, map: List, size: int) -> int:
         pass
 
 
 class FirstStrategy(FitStrategy):
-    def __init__(self, logger: Logger):
-        super().__init__(logger)
-
     def get_position(self, map: List, size: int) -> int:
         for i, (start, end, status) in enumerate(map):
             if status == 'Hole' and (end - start) >= size:
@@ -23,9 +16,6 @@ class FirstStrategy(FitStrategy):
     
 
 class PageStrategy(FitStrategy):
-    def __init__(self, logger: Logger):
-        super().__init__(logger)
-
     def get_position(self, map: List, size: int) -> int:
         for i, (start, end, status) in enumerate(map):
             if status == 'Free Frame(s)' and (end - start) >= size:
@@ -35,9 +25,6 @@ class PageStrategy(FitStrategy):
 
 
 class BestStrategy(FitStrategy):
-    def __init__(self, logger: Logger):
-        super().__init__(logger)
-
     def get_position(self, map: List, size: int) -> int:
         possible_holes = []
 
@@ -54,9 +41,6 @@ class BestStrategy(FitStrategy):
 
 
 class WorstStrategy(FitStrategy):
-    def __init__(self, logger: Logger):
-        super().__init__(logger)
-
     def get_position(self, map: List, size: int) -> int:
         possible_holes = []
 

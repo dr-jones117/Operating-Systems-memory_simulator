@@ -3,7 +3,7 @@ from memory_management.memory_manager import MemoryManager
 from process_system.process import Process
 
 
-class SegMemoryManager(MemoryManager):
+class VspMemoryManager(MemoryManager):
     def __init__(self, fit_strategy: FitStrategy, mem_size: int):
         super().__init__(mem_size)
         self.fit_strategy = fit_strategy
@@ -15,38 +15,23 @@ class SegMemoryManager(MemoryManager):
         self.memory_map.sort(key=lambda x: x[0])
         
         for process in self.process_queue:
-            skip_process = False
-            copied_map = self.memory_map.copy()
-            
-            for idx, segment in enumerate(process.memory_segments):
-                if skip_process:
-                    continue
-
-                idx_map, start_addr, end_addr  = self.fit_strategy.get_position(copied_map, segment)
-                
-                if idx_map != -1:
-                    copied_map.insert(idx_map, (start_addr, start_addr + segment, f"Process {process.id}, Segment {idx}"))
-                    if start_addr + segment < end_addr:
-                        copied_map[idx_map + 1] = (start_addr + segment, end_addr, 'Hole')
-                    else:
-                        del copied_map[idx_map + 1]
+            idx, start_addr, end_addr  = self.fit_strategy.get_position(self.memory_map, process.total_memory_amount())
+            if idx != -1:
+                self.memory_map.insert(idx, (start_addr, start_addr + process.total_memory_amount(), f"Process {process.id}"))
+                if start_addr + process.total_memory_amount() < end_addr:
+                    self.memory_map[idx + 1] = (start_addr + process.total_memory_amount(), end_addr, 'Hole')
                 else:
-                    skip_process = True
-                    continue
-
-            if skip_process:
-                continue
-
-            self.process_queue.remove(process)
-            self.memory_map = copied_map     
-            return process
+                    del self.memory_map[idx + 1]
+                self.process_queue.remove(process)
+                    
+                return process
                     
         return None
 
     
     def deallocate_process(self, process: Process):
         for i, (start, end, status) in enumerate(self.memory_map):
-            if f"Process {process.id}" in status:
+            if status == f"Process {process.id}":
                 self.memory_map[i] = (start, end, 'Hole')
 
                 if i > 0 and self.memory_map[i - 1][2] == 'Hole':
@@ -59,8 +44,4 @@ class SegMemoryManager(MemoryManager):
                     _, next_end, _ = self.memory_map[i + 1]
                     self.memory_map[i] = (start, next_end, 'Hole')
                     del self.memory_map[i + 1]
-
-                self.deallocate_process(process)
-
-
-        
+                return

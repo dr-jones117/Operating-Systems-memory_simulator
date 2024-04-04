@@ -1,14 +1,13 @@
-from algorithm.algorithm import PageStrategy
-from logger import Logger
+from algorithm.fit_strategy import PageStrategy
 from memory_management.memory_manager import MemoryManager
 from process_system.process import Process
 
 
 class PagMemoryManager(MemoryManager):
-    def __init__(self, logger: Logger, mem_size: int, page_size: int):
-        super().__init__(logger, mem_size)
+    def __init__(self, mem_size: int, page_size: int):
+        super().__init__(mem_size)
         self.page_size = page_size
-        self.fit_strategy = PageStrategy(logger)
+        self.fit_strategy = PageStrategy()
         self.memory_map = [(0, self.mem_size, 'Free Frame(s)')]
 
     def allocate_process(self) -> Process:

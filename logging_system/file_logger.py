@@ -1,6 +1,8 @@
 from typing import TextIO
+from logging_system.logger import Logger
 
-class Logger:
+
+class FileLogger(Logger):
     def __init__(self, path: str):
         try:
             self.out_file: TextIO = open(path, 'w')

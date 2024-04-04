@@ -1,8 +1,7 @@
 import heapq
-from typing import List
 from event_system.event import Event
-from logger import Logger
 from event_system.event_type import EventType
+from logging_system.logger import Logger
 from memory_management.memory_manager import MemoryManager
 
 
@@ -10,10 +9,13 @@ class EventHandler:
     def __init__(self, logger: Logger, memory_manager: MemoryManager):
         self.logger = logger;
         self.memory_manager = memory_manager
+
         self.entry_counter = 0
         self.event_queue = []
+
         self.current_time = None
         self.first_time = True
+
         self.turnaround_calc = 0
         self.num_processes = 0
 
@@ -22,7 +24,7 @@ class EventHandler:
         self.entry_counter += 1
         heapq.heappush(self.event_queue, event)
 
-    def allocate_processes_to_memory_manager(self):
+    def allocate_processes_to_memory(self):
         process = self.memory_manager.allocate_process()
         while(process != None):
             self.logger.log(f"MM moves Process {process.id} to memory\n\t")
@@ -32,8 +34,8 @@ class EventHandler:
 
             leave_event = Event(EventType.PROCESS_DEPARTURE, self.current_time + process.memory_lifetime, process)
             self.add_event(leave_event)
-            process = self.memory_manager.allocate_process()
 
+            process = self.memory_manager.allocate_process()
 
     def turnaround_time(self):
         return round(self.turnaround_calc / self.num_processes, 2)
@@ -73,9 +75,9 @@ class EventHandler:
                 self.turnaround_calc += (self.current_time - event.process.arrival_time)     
 
             elif event.type == EventType.ALLOCATE_PROCESS:
-                self.allocate_processes_to_memory_manager()
+                self.allocate_processes_to_memory()
 
-        self.logger.log(f"\nAverage Turnaround Time: {str(self.turnaround_time())}")
+        self.logger.log(f"\nAverage Turnaround Time: {str(self.turnaround_time())}\n")
 
         
                     
