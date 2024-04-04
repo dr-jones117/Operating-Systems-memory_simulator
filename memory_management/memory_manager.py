@@ -75,12 +75,3 @@ class VspMemoryManager(MemoryManager):
                     self.memory_map[i] = (start, next_end, 'Hole')
                     del self.memory_map[i + 1]
                 return
-
-
-
-
-
-class PagMemoryManager(MemoryManager):
-    def __init__(self, logger: Logger, mem_size: int, page_size: int):
-        super().__init__(logger, mem_size)
-        self.page_size = page_size

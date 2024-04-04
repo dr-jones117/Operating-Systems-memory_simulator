@@ -20,6 +20,18 @@ class FirstStrategy(FitStrategy):
                 return i, start, end
             
         return -1, -1, -1
+    
+
+class PageStrategy(FitStrategy):
+    def __init__(self, logger: Logger):
+        super().__init__(logger)
+
+    def get_position(self, map: List, size: int) -> int:
+        for i, (start, end, status) in enumerate(map):
+            if status == 'Free Frame(s)' and (end - start) >= size:
+                return i, start, end
+            
+        return -1, -1, -1
 
 
 class BestStrategy(FitStrategy):

@@ -3,10 +3,11 @@ from algorithm.algorithm import BestStrategy, FirstStrategy, WorstStrategy
 from event_system.event import Event
 from logger import Logger
 from event_system.event_type import *
+from memory_management.pag_memory_manager import PagMemoryManager
 from memory_management.seg_memory_manager import SegMemoryManager
 from process_system.process import Process
 from process_system.process_file import ProcessFile
-from memory_management.memory_manager import PagMemoryManager, VspMemoryManager
+from memory_management.memory_manager import VspMemoryManager
 from memory_management.memory_policy import MemoryPolicy
 from event_system.event_handler import EventHandler
 from algorithm.algorithm_type import AlgorithmType
