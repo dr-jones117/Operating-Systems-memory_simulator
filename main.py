@@ -30,15 +30,15 @@ def main():
 
     path: str = input('Process Information File Name: ')
     # If we're using a file logger, you'll need to get the output file name
-    out_path: str = input('Output File Name: ')
+    #out_path: str = input('Output File Name: ')
 
     # Get the processes from the path provided by the user
     process_file: ProcessFile = ProcessFile(path)
     processes: List[Process] = process_file.get_processes()
 
     # You can switch the logger you want to use here
-    logger = FileLogger(out_path)
-    #logger = ConsoleLogger()
+    #logger = FileLogger(out_path)
+    logger = ConsoleLogger()
 
     # Create the fitting strategy if needed
     if algorithm == AlgorithmType.FIRST.value:
